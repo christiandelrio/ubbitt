@@ -9,6 +9,7 @@ CORS(app)
 
 userBusiness = UserBusiness()
 
+# Creación de usuarios
 @app.route('/user', methods=["POST"])
 def register_user():
     user_data = request.get_json()
@@ -18,6 +19,7 @@ def register_user():
         return jsonify({'message': str(err)}), 400
     return jsonify({'userId': user_id, 'message': 'Usuario creado exitosamente'}), 200
 
+# Login
 @app.route('/login', methods=["POST"])
 def login():
     user_data = request.get_json()
@@ -27,13 +29,20 @@ def login():
         return jsonify({'message': str(err)}), 400
     return jsonify({'token': session_uuid}), 200
 
-@app.route('/user/:userId', methods=["PATCH"])
+# Actualización de datos de usuario
+@app.route('/user', methods=["PATCH"])
 def update_user():
     return 'This works!'
 
-@app.route('/user/:userId/password', methods=["PATCH"])
+# Cambio de contraseña
+@app.route('/user/password', methods=["PATCH"])
 def update_user_password():
-    return 'This works!'
+    password_data = request.get_json()
+    try:
+        userBusiness.update_password(request.headers['token'], password_data['password'])
+    except Exception as err:
+        return jsonify({'message': str(err)}), 400
+    return jsonify({'message': 'Contraseña actualizada exitosamente'}), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
