@@ -41,7 +41,12 @@ def logout():
 # Actualización de datos de usuario
 @app.route('/user', methods=["PATCH"])
 def update_user():
-    return 'This works!'
+    user_data = request.get_json()
+    try:
+        userBusiness.update_user_data(request.headers['token'], user_data['email'])
+    except Exception as err:
+        return jsonify({'message': str(err)}), 400
+    return jsonify({'message': 'Los datos del usuario fueron actualizados exitosamente'}), 200
 
 # Actualización de datos de usuario
 @app.route('/user', methods=["GET"])
