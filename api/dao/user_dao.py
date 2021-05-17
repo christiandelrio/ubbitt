@@ -23,3 +23,7 @@ class UserDao():
     def update_user_password(self, username, new_password):
         user = self.find_by_username(username)
         user.password = new_password
+
+    def update_user_data(self, username, email):
+        user = self.find_by_username(username)
+        user.email = email
