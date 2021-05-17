@@ -10,3 +10,6 @@ class Crypto:
 
     def cypher(self, password):
         return self.password_context.encrypt(password)
+
+    def verify_encrypted_password(self, password, hashed):
+        return self.password_context.verify(password, hashed)
