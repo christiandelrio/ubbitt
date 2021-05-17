@@ -12,3 +12,7 @@ class SessionDao:
         if len(found_sessions) > 0:
             user_session = found_sessions[0]
         return user_session
+
+    def delete_session_by_id(self, session_id):
+        # Elimina la sesión filtrando por el id
+        self.sessions = list(filter(lambda session: (session.session_id != session_id), self.sessions))
