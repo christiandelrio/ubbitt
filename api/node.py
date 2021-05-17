@@ -1,12 +1,22 @@
+from flask.json import jsonify
+from business.user_business import UserBusiness
 from flask import Flask
 from flask_cors import CORS
+from flask import request
 
 app = Flask(__name__)
 CORS(app)
 
+userBusiness = UserBusiness()
+
 @app.route('/user', methods=["POST"])
 def register_user():
-    return 'This works!'
+    user_data = request.get_json()
+    try:
+        user_id = userBusiness.create_user(user_data['username'], user_data['email'], user_data['password'])
+    except Exception as err:
+        return jsonify({'message': str(err)}), 400
+    return jsonify({'userId': user_id, 'message': 'Usuario creado exitosamente'}), 200
 
 @app.route('/login', methods=["POST"])
 def login():
