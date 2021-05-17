@@ -19,3 +19,7 @@ class UserDao():
         if len(found_users) > 0:
             user = found_users[0]
         return user
+
+    def update_user_password(self, username, new_password):
+        user = self.find_by_username(username)
+        user.password = new_password

@@ -18,24 +18,32 @@ class UserBusiness():
 
     def validate_user_data(self, username, email, password):
         if not username:
-            raise Exception('El nombre de usuario no puede ser vacío')
+            raise Exception('El nombre de usuario no puede ser vacío.')
         if not email:
-            raise Exception('El email no puede ser vacío')
+            raise Exception('El email no puede ser vacío.')
         if not password:
-            raise Exception('La contraseña no puede ser vacía')
+            raise Exception('La contraseña no puede ser vacía.')
         if self.users_dao.email_exists(email):
-            raise Exception('No se puede crear el usuario, el email ya ha sido usado para otro usuario')
+            raise Exception('No se puede crear el usuario, el email ya ha sido usado para otro usuario.')
         if self.users_dao.username_exists(username):
-            raise Exception('No se puede crear el usuario, el nombre de usuario ya ha sido usado para otro usuario')
+            raise Exception('No se puede crear el usuario, el nombre de usuario ya ha sido usado para otro usuario.')
 
     def login(self, username, password):
         user = self.users_dao.find_by_username(username)
         if user is None:
-            raise Exception('El usuario y/o contraseña son incorrectos, por favor intenta de nuevo')
+            raise Exception('El usuario y/o contraseña son incorrectos, por favor intenta de nuevo.')
         crypto = Crypto()
         if not crypto.verify_encrypted_password(password, user.password):
-            raise Exception('El usuario y/o contraseña son incorrectos, por favor intenta de nuevo')
+            raise Exception('El usuario y/o contraseña son incorrectos, por favor intenta de nuevo.')
         session_uuid = str(uuid.uuid4())
         session = Session(username, session_uuid)
         self.session_dao.save_session(session)
         return session_uuid
+
+    def update_password(self, session_id, new_password):
+        session = self.session_dao.find_user_by_session(session_id)
+        if session is None:
+            raise Exception('La sesión es inválida.')
+        crypto = Crypto()
+        new_hashed_password = crypto.cypher(new_password)
+        self.users_dao.update_user_password(session.username, new_hashed_password)
