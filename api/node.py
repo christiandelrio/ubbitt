@@ -20,7 +20,12 @@ def register_user():
 
 @app.route('/login', methods=["POST"])
 def login():
-    return 'This works!'
+    user_data = request.get_json()
+    try:
+        session_uuid = userBusiness.login(user_data['username'], user_data['password'])
+    except Exception as err:
+        return jsonify({'message': str(err)}), 400
+    return jsonify({'token': session_uuid}), 200
 
 @app.route('/user/:userId', methods=["PATCH"])
 def update_user():
